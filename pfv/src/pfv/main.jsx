@@ -1,21 +1,21 @@
-    import React,{useEffect, useState} from 'react';
-    import "./main.css";
+import React,{useEffect, useState} from 'react';
+import Node from "../pfv/node/node.jsx"
+import "./main.css";
 
 var rows=20,cols=50,nodes=[];
 const App =(()=>{   
     const [current,setCurrent] = useState([true,false]);
     const [position,setPosition] = useState([0,749]);
-    const classes = ['startnode','endnode','blocks'];
     nodes=[];
-    for(let i=0;i<rows;i++){
-        for(let j=0;j<cols;j++){
-            nodes.push([i,j,'blocks']);
+    for(let row=0;row<rows;row++){
+        for(let col=0;col<cols;col++){
+            nodes.push([
+                row*cols+col,
+                row,
+                col,
+            ]);
         }
     }
-
-    const node_index = (i,j) =>{
-        return i*cols +j;
-    };
 
     const handleclick = (e) =>{
         let array = [false,false];
@@ -27,26 +27,11 @@ const App =(()=>{
         let array = [];
         for(let i=0;i<2;i++){
             if(current[i]){
-                array.push(node_index(e[0],e[1]));
+                array.push(e);
             }
             else array.push(position[i]);
         }
         setPosition(array);
-    };
-
-    // useEffect(()=>{
-    //     for(let i=0;i<2;i++){
-    //         nodes[position[i]][2] = classes[i];
-    //         console.log(nodes[position[i]]);
-    //     }
-    // },[position]); 
-    const checkposition =(e) =>{
-        for(let i=0;i<2;i++){
-            if(node_index(e[0],e[1])===position[i]){
-                return classes[i];
-            }
-        }
-        return classes[2];
     };
 
     return(
@@ -56,7 +41,12 @@ const App =(()=>{
             {/* <button onClick={() =>bfs()}>BFS</button> */}
             <div className="canvas" >
                 {nodes.map(e=>(
-                    <div className={`node ${checkposition(e)}`} onClick={() =>handlechange(e)}>
+                    <div onClick={() =>handlechange(e[0])}>
+                        <Node
+                            key={e}
+                            isStart = {position[0]===e[0]}
+                            isEnd = {position[1]===e[0]}
+                        />
                     </div>
                 ))}
             </div>

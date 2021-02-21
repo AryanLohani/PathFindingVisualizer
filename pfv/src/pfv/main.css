@@ -2,16 +2,3 @@
     width:1350px;
     margin: auto;
 }
-.startnode{
-    background-color: green;
-}
-.endnode{
-    background-color: red;
-}
-
-.node{
-    border: 1px solid black;
-    height: 25px;
-    width: 25px;
-    float: left;
-}
