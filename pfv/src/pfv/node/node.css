@@ -4,10 +4,16 @@
 .endnode{
     background-color: red;
 }
+.visited{
+    background-color: aqua;
+}
+.path{
+    background-color: yellow;
+}
 
 .node{
-    border: 1px solid black;
-    height: 25px;
-    width: 25px;
+    outline: 1px solid black;
+    height:40px;
+    width: 40px;
     float: left;
 }

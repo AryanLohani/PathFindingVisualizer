@@ -1,4 +1,9 @@
 .canvas{
-    width:1350px;
     margin: auto;
+}
+.node{
+    border: 1px solid black;
+    height:30px;
+    width: 40px;
+    float: left;
 }
