@@ -1,12 +1,12 @@
 
-export  function Djisktra(rows,cols,startnode,endnode,size){
-    const INF = 100000;
-
-    function isNeighbor(row,col){
-        return (row>=0 && row<rows) && (col>=0 && col<cols);
-    }
+export  function Djisktra(rows,cols,startnode,endnode,grid){
+    const INF = 100000,size = grid.length;
+    
     function node(row,col){
         return row*cols + col;
+    }
+    function isNeighbor(row,col){
+        return (row>=0 && row<rows) && (col>=0 && col<cols) && (!grid[node(row,col)][5]);
     }
     function calculateShotestPath(distance){
         let shortestpath=[];    
@@ -57,5 +57,5 @@ export  function Djisktra(rows,cols,startnode,endnode,size){
             }
         }
     }
-    return[[-1],[-1]];
+    return[OrderOfVisitedNodes,[]];
 }
