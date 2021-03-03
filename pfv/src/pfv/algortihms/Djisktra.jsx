@@ -47,6 +47,7 @@ export function Djisktra(rows,cols,startnode,endnode,grid){
             }
         );
         let u = queue[0];
+        if(u!=startnode)OrderOfVisitedNodes.push(u);
         let r = grid[u].row , c = grid[u].col;
         let x = queue.shift();
         for(let row=r-1;row<=r+1;row++){
@@ -57,7 +58,6 @@ export function Djisktra(rows,cols,startnode,endnode,grid){
                         if(v==endnode){
                             return [OrderOfVisitedNodes,calculateShotestPath(distance)];
                         }
-                        OrderOfVisitedNodes.push(v);
                         distance[v] = distance[u]+grid[v].Weight;
                         queue.push(v);
                     }

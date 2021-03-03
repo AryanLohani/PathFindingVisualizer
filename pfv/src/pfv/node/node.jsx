@@ -1,4 +1,6 @@
 import React,{useEffect, useState} from 'react';
+import { IoIosArrowDropright ,IoIosArrowDropleft} from "react-icons/io";
+import { MdLock } from "react-icons/md";
 import "./node.css";
 
 const Node = (props) =>{
@@ -10,18 +12,34 @@ const Node = (props) =>{
             Weight = props.Weight,
             idx = props.idx;
     var classes = "node ";
-    if(isStart) classes+="startnode ";
-    else if(isEnd) classes+="endnode ";
-    else if(isPath) classes+="path ";
+    if(isPath) classes+="path ";
     else if(isVisited) classes+="visited ";
-    else {
-        if(Weight==wall_weight) classes+="wall ";
-        else if(Weight>1) classes+="weight ";
-    }
+    else if(Weight==wall_weight) classes+="wall "
 
+    var src = "";
+    const Icon =(e) =>{
+        switch (true){
+            case isStart:
+                return(
+                    <IoIosArrowDropright/>
+                );
+            case isEnd:
+                return(
+                    <IoIosArrowDropleft/>
+                );
+            case Weight>1 && Weight<wall_weight:
+                return(
+                    <MdLock/>
+                );
+            default:
+                return null;
+        }
+    } 
 
     return(
-        <div className={classes}></div>
-    )
+        <div className={classes}>
+            {Icon()}
+        </div>
+    );
 };
 export default Node;
