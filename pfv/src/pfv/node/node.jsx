@@ -9,15 +9,13 @@ const Node = (props) =>{
             isEnd = props.isEnd,
             isVisited=props.isVisited,
             isPath = props.isPath,
-            Weight = props.Weight,
-            idx = props.idx;
+            Weight = props.Weight;
     var classes = "node ";
     if(isPath) classes+="path ";
     else if(isVisited) classes+="visited ";
     else if(Weight==wall_weight) classes+="wall "
 
-    var src = "";
-    const Icon =(e) =>{
+    const Icon =() =>{
         switch (true){
             case isStart:
                 return(
