@@ -1,9 +1,14 @@
-.canvas{
-    margin: auto;
-}
 .node{
     border: 1px outset rgb(144, 135, 224);
     height:30px;
     width: 40px;
     float: left;
+}
+.item{
+    text-align: center;
+}
+.y{
+    font-weight: 200;
+    margin-top: 0;
+    margin-left: 10px;
 }

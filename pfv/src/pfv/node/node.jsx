@@ -1,4 +1,4 @@
-import React,{useEffect, useState} from 'react';
+import React from 'react';
 import { IoIosArrowDropright ,IoIosArrowDropleft} from "react-icons/io";
 import { MdLock } from "react-icons/md";
 import "./node.css";
