@@ -1,7 +1,9 @@
-import React from 'react';
-import { IoIosArrowDropright ,IoIosArrowDropleft} from "react-icons/io";
-import { MdLock } from "react-icons/md";
+import React  from 'react';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import LockIcon from '@material-ui/icons/Lock';
 import "./node.css";
+
 
 const Node = (props) =>{
     const wall_weight = 1e6; 
@@ -19,15 +21,15 @@ const Node = (props) =>{
         switch (true){
             case isStart:
                 return(
-                    <IoIosArrowDropright/>
+                    <PlayArrowIcon color="primary" fontSize="large"/>
                 );
             case isEnd:
                 return(
-                    <IoIosArrowDropleft/>
+                    <HighlightOffIcon color="secondary" fontSize="medium"/>
                 );
             case Weight>1 && Weight<wall_weight:
                 return(
-                    <MdLock/>
+                    <LockIcon fontSize="small"/>
                 );
             default:
                 return null;

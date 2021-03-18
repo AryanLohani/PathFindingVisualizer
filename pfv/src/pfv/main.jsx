@@ -6,7 +6,8 @@ import {
 
 } from "@material-ui/system"
 import Node from "../pfv/node/node.jsx"
-import { Djisktra } from "../pfv/algortihms/Djisktra"
+import { Djisktra } from "../pfv/algortihms/Djisktra";
+import { removeWalls } from "../pfv/algortihms/Bfs";
 import "./main.css";
 
 var rows = 15, cols = Math.floor((document.body.clientWidth - 80) / 40);
@@ -23,7 +24,8 @@ const GenerateGrid = () => {
 };
 
 const AlgoDescription ={
-    Djisktra:"Djisktra is a greedy Algorithm for finding the shortest path",
+    Djisktra:"Djisktra is a greedy Algorithm for finding the shortest path. It works in O(V+ElogE) time complexity and is an weighted path finding algorithm",
+    BFS:"BFS stands for breadth for search. The algorithm moves level by level. It works in o(V+E) time and is an Un-Weighted path finding algorithm",
 }
 
 const CreateNode = (row, col) => {
@@ -60,31 +62,33 @@ const App = (() => {
                 let newgrid = grid.slice();
                 newgrid[shortestpath[i]].isPath = true;
                 setGrid(newgrid);
-            }, 200 * (i) + 10 * timeout);
+            }, 300 * (i) + 100 * timeout);
         }
     }
-
-    useEffect(() => {
-        document.title = weight;
-    })
-
     const AnimateDjisktra = (OrderOfVisitedNodes) => {
         for (let i = 0; i < OrderOfVisitedNodes.length; i++) {
             setInterval(() => {
                 let newgrid = grid.slice();
                 newgrid[OrderOfVisitedNodes[i]].isVisited = true;
                 setGrid(newgrid);
-            }, 5 * i);
+            }, 100* i);
         }
     }
 
     const runDjisktra = () => {
         const [OrderOfVisitedNodes, shortestpath] = Djisktra(rows, cols, position[0], position[1], grid);
+        setDescription(AlgoDescription.Djisktra);
         AnimateDjisktra(OrderOfVisitedNodes);
         AnimateShortestpath(shortestpath, OrderOfVisitedNodes.length + 1);
-        setDescription(AlgoDescription.Djisktra);
     };
 
+    const runBFS = () =>{
+        let new_grid = removeWalls(grid,rows,cols,wall_weight);
+        setDescription(AlgoDescription.BFS);
+        setGrid(new_grid);
+        runDjisktra();
+        setDescription(AlgoDescription.BFS);
+    }
 
     const handlewalls = (idx) => {
         if (pressed) {
@@ -93,17 +97,21 @@ const App = (() => {
             setGrid(newgrid);
         }
     };
+    
+    document.title="Path Finding Visualizer"
+    
 
     return (
-        <div className="y">
-            <Container maxWidth="xl">
-                <Grid container  justify="flex-start">
+        <section >
+            {/* <button onClick={()=>setGrid(GenerateGrid())}>reset</button> */}
+            <Container maxWidth="xl" className="container">
+                <Grid container  justify="flex-start" >
                     <Grid item md={3} className="item">
-                        <h4>Select and double click on Grid to Change start and end positions</h4>
+                        <p>Select and double click on Grid to Change start and end positions</p>
                         <Box m={1}>
                             <Button
                                 onClick={() => setStart(true)}
-                                variant="outlined"
+                                variant="contained"
                                 color="primary"
                                 size="small"
                             >
@@ -112,7 +120,7 @@ const App = (() => {
                         <Box m={1}>
                             <Button
                                 onClick={() => setStart(false)}
-                                variant="outlined"
+                                variant="contained"
                                 color="primary"
                                 size="small"
                             >
@@ -120,21 +128,22 @@ const App = (() => {
                         </Box>
                     </Grid>
                     <Grid item md={3} className="item">
-                        <h4>Click and drag to create Walls and weights</h4>
+                        <p>Click and drag to create Walls and weights</p>
                         <Box m={1}>
                             <Button
                                 onClick={() => setWeight(wall_weight)}
-                                variant="outlined"
+                                variant="contained"
                                 color="primary"
                                 size="small"
                             >
                             Set Walls</Button>
                         </Box>
                         <Box m={1}>
-                            <input type="range" max="50" min="2" id="weight"></input><br/>
+                            <input type="range" max="50" min="2" id="weight"></input>
+                            <br/>
                             <Button
                                 onClick={() => setWeight(document.getElementById("weight").value)}
-                                variant="outlined"
+                                variant="contained"
                                 color="primary"
                                 size="small"
                             >
@@ -142,21 +151,31 @@ const App = (() => {
                         </Box>
                     </Grid>
                     <Grid item md={3} className="item">
-                        <h4>Choose one of the following Algorithms</h4>
-                        <Box m={1}>
-                            <Button
-                                onClick={() => runDjisktra()}
-                                variant="outlined"
-                                color="primary"
-                                size="small"
-                            >
-                            Djisktra</Button>
-                        </Box>
+                        <p>Choose one of the following Algorithms</p>
+                        <Grid container>
+                            <Grid item xs={6}   className="border-right">
+                                <u><h4>Weighted</h4></u>
+                                <Button
+                                    onClick={() => runDjisktra()}
+                                    color="primary"
+                                    size="small"
+                                >
+                                Djisktra</Button>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <u><h4>Un-Weighted</h4></u>
+                                <Button
+                                    onClick={() => runBFS()}
+                                    color="primary"
+                                    size="small"
+                                >
+                                BFS</Button>
+                            </Grid>
+                        </Grid>
                     </Grid>
                 </Grid>
             </Container>
-            <hr/>
-            <div style={{ width: (cols) * 42 }}>
+            <div style={{ width: (cols) * 42 }} className="grid">
                 {grid.map(e => (
                     <div
                         onDoubleClick={() => handlechange(e.idx)}
@@ -175,9 +194,9 @@ const App = (() => {
                         />
                     </div>
                 ))}
+                <b>Algorithm Description: </b><i>{Description}</i>
             </div>
-            <i>Algorithm Description: {Description}</i>
-        </div>
+        </section>
     );
 });
 export default App;
