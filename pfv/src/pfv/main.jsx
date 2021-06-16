@@ -10,10 +10,24 @@ import { Djisktra } from "../pfv/algortihms/Djisktra";
 import { removeWalls } from "../pfv/algortihms/Bfs";
 import "./main.css";
 
-var rows = 15, cols = Math.floor((document.body.clientWidth - 80) / 40);
+var rows = 17, cols = Math.floor((document.body.clientWidth - 80) / 40) ;
 
+const AlgoDescription ={
+    Djisktra:"Djisktra is a greedy Algorithm for finding the shortest path. It works in O(V+ElogE) time complexity and is an weighted path finding algorithm",
+    BFS:"BFS stands for breadth for search. The algorithm moves level by level. It works in o(V+E) time and is an Un-Weighted path finding algorithm",
+}
 
 const GenerateGrid = () => {
+    const CreateNode = (row, col) => {
+        return {
+            idx: cols * row + col,
+            row: row,
+            col: col,
+            isVisited: false,
+            isPath: false,
+            Weight: 1,
+        }
+    }
     let grid = [];
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
@@ -22,22 +36,6 @@ const GenerateGrid = () => {
     }
     return grid;
 };
-
-const AlgoDescription ={
-    Djisktra:"Djisktra is a greedy Algorithm for finding the shortest path. It works in O(V+ElogE) time complexity and is an weighted path finding algorithm",
-    BFS:"BFS stands for breadth for search. The algorithm moves level by level. It works in o(V+E) time and is an Un-Weighted path finding algorithm",
-}
-
-const CreateNode = (row, col) => {
-    return {
-        idx: cols * row + col,
-        row: row,
-        col: col,
-        isVisited: false,
-        isPath: false,
-        Weight: 1,
-    }
-}
 
 const App = (() => {
     const wall_weight = 1e6;
@@ -48,7 +46,6 @@ const App = (() => {
     const [weight, setWeight] = useState(wall_weight);
     const [Description , setDescription] = useState("");
 
-
     const handlechange = (idx) => {
         let array = position.slice();
         if (start) array[0] = idx;
@@ -56,30 +53,35 @@ const App = (() => {
         setPosition(array);
     };
 
-    const AnimateShortestpath = (shortestpath, timeout) => {
-        for (let i = 0; i < shortestpath.length; i++) {
-            setInterval(() => {
+    async function Animate(Arr, i ,key){
+        if(i==Arr.length) return true;
+        let myPromise = new Promise((resolve,reject)=>{
+            setTimeout(()=>{
                 let newgrid = grid.slice();
-                newgrid[shortestpath[i]].isPath = true;
+                newgrid[Arr[i]][key] = true;
                 setGrid(newgrid);
-            }, 300 * (i) + 100 * timeout);
+                resolve(true);
+            },document.getElementById("time").value);
+        });
+        if(await myPromise){
+            return Animate(Arr,i+1,key);
         }
     }
-    const AnimateDjisktra = (OrderOfVisitedNodes) => {
-        for (let i = 0; i < OrderOfVisitedNodes.length; i++) {
-            setInterval(() => {
-                let newgrid = grid.slice();
-                newgrid[OrderOfVisitedNodes[i]].isVisited = true;
-                setGrid(newgrid);
-            }, 100* i);
+
+    async function AnimateVisitedOrder(Order , shortestpath){
+        let myPromise = new Promise((resolve , reject) => {
+            resolve(Animate(Order, 0 ,"isVisited"));
+        });
+        if(await myPromise){
+            Animate(shortestpath, 0 ,"isPath");
         }
     }
 
     const runDjisktra = () => {
-        const [OrderOfVisitedNodes, shortestpath] = Djisktra(rows, cols, position[0], position[1], grid);
+        const [Order, shortestpath] = Djisktra(rows, cols, position[0], position[1], grid);
         setDescription(AlgoDescription.Djisktra);
-        AnimateDjisktra(OrderOfVisitedNodes);
-        AnimateShortestpath(shortestpath, OrderOfVisitedNodes.length + 1);
+        AnimateVisitedOrder(Order , shortestpath);
+        // AnimateShortestpath(shortestpath);
     };
 
     const runBFS = () =>{
@@ -98,15 +100,13 @@ const App = (() => {
         }
     };
     
-    document.title="Path Finding Visualizer"
-    
+    document.title = "Path Finding Visualizer";
 
     return (
         <section >
-            {/* <button onClick={()=>setGrid(GenerateGrid())}>reset</button> */}
             <Container maxWidth="xl" className="container">
-                <Grid container  justify="flex-start" >
-                    <Grid item md={3} className="item">
+                <Grid container  justify="center" >
+                    <Grid item md={4} className="item">
                         <p>Select and double click on Grid to Change start and end positions</p>
                         <Box m={1}>
                             <Button
@@ -127,8 +127,8 @@ const App = (() => {
                             Choose End Point</Button>
                         </Box>
                     </Grid>
-                    <Grid item md={3} className="item">
-                        <p>Click and drag to create Walls and weights</p>
+                    <Grid item md={4} className="item">
+                        <p>Click and drag to create walls and Weights</p>
                         <Box m={1}>
                             <Button
                                 onClick={() => setWeight(wall_weight)}
@@ -138,19 +138,29 @@ const App = (() => {
                             >
                             Set Walls</Button>
                         </Box>
-                        <Box m={1}>
-                            <input type="range" max="50" min="2" id="weight"></input>
-                            <br/>
-                            <Button
-                                onClick={() => setWeight(document.getElementById("weight").value)}
-                                variant="contained"
-                                color="primary"
-                                size="small"
-                            >
-                            Set Weights</Button>
-                        </Box>
+                        <Grid container padding={1}>
+                            <Grid item xs={6}>
+                                <p>Weight of nodes to assign</p>
+                                <input 
+                                    type="range" 
+                                    max="20" 
+                                    min="2" 
+                                    id="weight" 
+                                    onChange = {() => setWeight(document.getElementById("weight").value)}
+                                ></input>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <p>Speed of Animation</p>
+                                <input 
+                                    type="range" 
+                                    max="1000" 
+                                    min="50" 
+                                    id="time" 
+                                ></input>
+                            </Grid>
+                        </Grid>
                     </Grid>
-                    <Grid item md={3} className="item">
+                    <Grid item md={4} className="item">
                         <p>Choose one of the following Algorithms</p>
                         <Grid container>
                             <Grid item xs={6}   className="border-right">
@@ -191,10 +201,10 @@ const App = (() => {
                             Weight={e.Weight}
                             isStart={position[0] === e.idx}
                             isEnd={position[1] === e.idx}
+                            pressed = {pressed}
                         />
                     </div>
                 ))}
-                <b>Algorithm Description: </b><i>{Description}</i>
             </div>
         </section>
     );

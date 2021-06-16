@@ -1,5 +1,5 @@
 .node{
-    border: 1px outset rgba(12, 181, 211, 0.979);
+    border: 1px outset rgb(224, 246, 252);
     height:30px;
     width: 40px;
     float: left;
@@ -23,5 +23,5 @@
     border-right: 1px solid black;
 }
 body{
-    background-color: rgb(231, 237, 238);
+    background-color: rgb(224, 246, 252);
 }

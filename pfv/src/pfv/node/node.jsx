@@ -6,28 +6,55 @@ import "./node.css";
 
 
 const Node = (props) =>{
-    const wall_weight = 1e6; 
-    const   isStart = props.isStart,
-            isEnd = props.isEnd,
-            isVisited=props.isVisited,
-            isPath = props.isPath,
-            Weight = props.Weight;
-    var classes = "node ";
-    if(isPath) classes+="path ";
-    else if(isVisited) classes+="visited ";
-    else if(Weight==wall_weight) classes+="wall "
+    const wall_weight = 1e6;
+    var classes = "node tooltip ";
+    const iterate = {
+        isStart: props.isStart,
+        isEnd: props.isEnd,
+        isPath: props.isPath,
+        isVisited: props.isVisited,
+        Weight: props.Weight == wall_weight,
+    }
 
+    const classname = {
+        isStart: "startnode ",
+        isEnd: "endnode ",
+        isPath: "path ",
+        isVisited: "visited ",  
+        Weight: "wall ",
+    };
+
+    for(let key in iterate){
+        if(iterate[key] ){
+            classes += classname[key];
+            break;
+        }
+    }
+    const generateText = ()=>{
+        const tooltip = {
+            isStart: "startnode\n",
+            isEnd: "endnode\n",
+        }
+        var text = "index: "  + props.idx;
+        text += (iterate.Weight ? "Wall" : " Weight:" + props.Weight) + "\n";
+        for(let key in tooltip){
+            if(iterate[key]){
+                text += tooltip[key]; 
+            }
+        }
+        return text;
+    }
     const Icon =() =>{
         switch (true){
-            case isStart:
+            case props.isStart:
                 return(
-                    <PlayArrowIcon color="primary" fontSize="large"/>
+                    <PlayArrowIcon fontSize="large"/>
                 );
-            case isEnd:
+            case props.isEnd:
                 return(
-                    <HighlightOffIcon color="secondary" fontSize="medium"/>
+                    <HighlightOffIcon fontSize="large"/>
                 );
-            case Weight>1 && Weight<wall_weight:
+            case props.Weight>1 && props.Weight<wall_weight:
                 return(
                     <LockIcon fontSize="small"/>
                 );
@@ -35,10 +62,10 @@ const Node = (props) =>{
                 return null;
         }
     } 
-
     return(
         <div className={classes}>
             {Icon()}
+            <p className="tooltiptext">{generateText()}</p>
         </div>
     );
 };
