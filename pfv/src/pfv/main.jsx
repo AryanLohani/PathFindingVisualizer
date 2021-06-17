@@ -21,6 +21,7 @@ const App = (() => {
     const [pressed, setPressed] = useState(false);
     const [weight, setWeight] = useState(wall_weight);
     const [Description, setDescription] = useState("");
+    const [isAnimation , setIsAnimation] = useState(false);
 
     document.title = "Path Finding Visualizer";
     const AlgoCall = {
@@ -37,7 +38,7 @@ const App = (() => {
     };
 
     const handlewalls = (idx) => {
-        if (pressed) {
+        if (pressed && !isAnimation) {
             let newgrid = grid.slice();
             newgrid[idx].Weight = weight;
             setGrid(newgrid);
@@ -60,12 +61,14 @@ const App = (() => {
     };
 
     async function AnimateVisitedOrder(Order, shortestpath) {
+        setIsAnimation(true);
         let myPromise = new Promise((resolve, reject) => {
             resolve(Animate(Order, 0, "isVisited"));
         });
         if (await myPromise) {
             Animate(shortestpath, 0, "isPath");
         }
+        setIsAnimation(false);
     };
 
     const RunAlgo = (key) => {
@@ -89,6 +92,7 @@ const App = (() => {
                                 variant="contained"
                                 color="primary"
                                 size="small"
+                                disabled = {isAnimation}
                             >
                                 Choose Start Point</Button>
                         </Box>
@@ -98,8 +102,27 @@ const App = (() => {
                                 variant="contained"
                                 color="primary"
                                 size="small"
+                                disabled = {isAnimation}
                             >
                                 Choose End Point</Button>
+                        </Box>
+                        <Box m={1}>
+                            {/* <Button
+                                onClick={() => setGrid(GenerateGrid(rows,cols))}
+                                variant="contained"
+                                color="primary"
+                                size="small"
+                                disabled = {isAnimation}
+                            >
+                            stop</Button> */}
+                            <Button
+                                onClick={() => setGrid(GenerateGrid(rows,cols))}
+                                variant="contained"
+                                color="primary"
+                                size="small"
+                                disabled = {isAnimation}
+                            >
+                            Reset</Button>
                         </Box>
                     </Grid>
                     <Grid item md={4} className="item">
@@ -110,6 +133,7 @@ const App = (() => {
                                 variant="contained"
                                 color="primary"
                                 size="small"
+                                disabled = {isAnimation}
                             >
                                 Set Walls</Button>
                         </Box>
@@ -122,6 +146,7 @@ const App = (() => {
                                     min="2"
                                     id="weight"
                                     onChange={() => setWeight(document.getElementById("weight").value)}
+                                    disabled = {isAnimation}
                                 ></input>
                             </Grid>
                             <Grid item xs={6}>
@@ -144,6 +169,7 @@ const App = (() => {
                                         onClick={() => RunAlgo(e)}
                                         color="primary"
                                         size="small"
+                                        disabled = {isAnimation}
                                     >
                                     {e}</Button>
                                 </Grid>
