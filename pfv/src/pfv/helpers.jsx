@@ -1,4 +1,20 @@
-export function GenerateGrid(rows,cols){
+function rand(){
+    const wall_weight = 1e6;
+    if(Math.floor(Math.random() * 10)%2){
+        return 1;
+    }
+    else return wall_weight;
+}
+
+export function GenerateRandomWalls(grid){
+    let new_grid = grid.slice();
+    for(let node in new_grid){
+        new_grid[node].Weight = rand();
+    }
+    return new_grid
+}
+
+export function GenerateGrid(rows, cols){
     function CreateNode(row, col){
         return {
             idx: cols * row + col,

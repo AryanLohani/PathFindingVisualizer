@@ -4,12 +4,14 @@ import {
 } from "@material-ui/core";
 import "./main.css";
 import Node from "../pfv/node/node.jsx"
-import { GenerateGrid, RemoveWeights } from "./helpers.jsx"
+import { GenerateGrid, GenerateRandomWalls , RemoveWeights} from "./helpers.jsx"
 
 import { Djisktra } from "./algortihms/Djisktra";
 import { BFS } from "./algortihms/BFS";
 import { DFS } from "./algortihms/DFS"
+import { GameOfLife } from "./algortihms/GameOfLife";
 import { AlgoDescription, AlgoName, isWeighted } from "../pfv/algortihms/data";
+import { row } from './algortihms/helpers';
 
 var rows = 17, cols = Math.floor((document.body.clientWidth - 55) / 40) - 1;
 
@@ -21,6 +23,7 @@ const App = (() => {
     const [pressed, setPressed] = useState(false);
     const [weight, setWeight] = useState(wall_weight);
     const [Description, setDescription] = useState("");
+    const [startGame , setStartGame] = useState(false);
     const [isAnimation , setIsAnimation] = useState(false);
 
     document.title = "Path Finding Visualizer";
@@ -71,9 +74,43 @@ const App = (() => {
         setIsAnimation(false);
     };
 
+    async function AnimateGameOfLife(){
+        let myPromise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                console.log(grid);
+                let new_grid = GameOfLife(grid , rows , cols);
+                setGrid(new_grid);
+                resolve(true);
+            } , document.getElementById("time").value);
+        });
+        if(await myPromise){
+            AnimateGameOfLife();
+        }
+    };
+
+    async function initGame(){
+        let myPromise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                setStartGame(true);
+                let new_grid = GenerateRandomWalls(grid);
+                setGrid(new_grid);
+                console.log(grid);
+                resolve(true);
+            },1000);
+        });
+        if(await myPromise){
+            AnimateGameOfLife();
+        }
+    }
+
     const RunAlgo = (key) => {
         if(!isWeighted[key]){
-            setGrid(RemoveWeights(grid));
+            let new_grid = RemoveWeights(grid);
+            setGrid(new_grid);
+        }
+        if(key=="GameOfLife"){
+            initGame();
+            return;
         }
         const [Order, shorteshtpath] = AlgoCall[key];
         setDescription(AlgoDescription[key]);
@@ -107,14 +144,6 @@ const App = (() => {
                                 Choose End Point</Button>
                         </Box>
                         <Box m={1}>
-                            {/* <Button
-                                onClick={() => setGrid(GenerateGrid(rows,cols))}
-                                variant="contained"
-                                color="primary"
-                                size="small"
-                                disabled = {isAnimation}
-                            >
-                            stop</Button> */}
                             <Button
                                 onClick={() => setGrid(GenerateGrid(rows,cols))}
                                 variant="contained"
@@ -153,7 +182,7 @@ const App = (() => {
                                 <p>Speed of Animation</p>
                                 <input
                                     type="range"
-                                    max="1000"
+                                    max="5000"
                                     min="50"
                                     id="time"
                                 ></input>
@@ -192,8 +221,8 @@ const App = (() => {
                             isVisited={e.isVisited}
                             isPath={e.isPath}
                             Weight={e.Weight}
-                            isStart={position[0] === e.idx}
-                            isEnd={position[1] === e.idx}
+                            isStart={position[0] === e.idx && !startGame}
+                            isEnd={position[1] === e.idx && !startGame}
                             pressed={pressed}
                         />
                     </div>
