@@ -35,9 +35,12 @@ export function GenerateGrid(rows, cols){
     return grid;
 };
 
-export function RemoveWeights(grid){
+export function RemoveWeights(grid, key){
     const wall_weight = 1e6;
     let new_grid = grid.slice();
+    if(key == "Djisktra"){
+        return new_grid
+    }
     for(let i = 0;i < grid.length ; i++){
         if(new_grid[i].Weight!=wall_weight) new_grid[i].Weight = 1;
     }
